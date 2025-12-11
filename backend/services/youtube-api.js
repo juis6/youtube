@@ -31,7 +31,9 @@ class YoutubeApiService {
                 }
             }
 
-            const data = (await fetch(url, options)).json()
+            const response = await fetch(url, options)
+            const data = await response.json()
+
             return YoutubeApiSerializer.serializeSearchResult(data)
         } catch (err) {
             console.error("Search API error:", err)
