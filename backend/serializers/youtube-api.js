@@ -27,7 +27,7 @@ class YoutubeApiSerializer {
                 prevPageToken: data.prevPageToken || null
             }
         } catch (err) {
-            console.error("Search result serialization error:", err)
+            console.error("Search result serialization error:", err.message)
             return null
         }
     }

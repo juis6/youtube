@@ -3,6 +3,7 @@ import express from "express"
 import morgan from "morgan"
 
 import { YoutubeApiService } from "./services/youtube-api.js"
+import { YoutubeApiSerializer } from "./serializers/youtube-api.js"
 
 const PORT = process.env.PORT
 
@@ -13,7 +14,7 @@ app.use(express.json())
 
 app.get("/", (req, res) => {
     res.status(200).json({
-        msg: "Hello world"
+        message: "Hello world"
     })
 })
 
@@ -26,17 +27,21 @@ app.get("/health", (req, res) => {
 
 app.get("/youtube-api/search", async (req, res) => {
     try {
-        const result = await YoutubeApiService.search(req.query)
-        res.status(200).json(result)
+        const response = await YoutubeApiService.search(req.query)
+
+        const data = await response.json()
+        const serialized = YoutubeApiSerializer.serializeSearchResult(data)
+
+        res.status(200).json(serialized)
     } catch (err) {
-        console.error("Search endpoint error:", err)
+        console.error("Search endpoint error:", err.message)
         res.status(500).json({ error: err.message })
     }
 })
 
 app.use((req, res) => {
     res.status(404).json({
-        msg: "Endpoint not found"
+        error: "Endpoint not found"
     })
 })
 

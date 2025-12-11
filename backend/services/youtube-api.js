@@ -1,7 +1,5 @@
 import "dotenv/config"
 
-import { YoutubeApiSerializer } from "../serializers/youtube-api.js"
-
 const X_RAPIDAPI_KEY = process.env.X_RAPIDAPI_KEY
 const X_RAPIDAPI_HOST = process.env.X_RAPIDAPI_HOST
 const SEARCH_URL = process.env.SEARCH_URL
@@ -14,15 +12,11 @@ class YoutubeApiService {
                 part: "snippet",
                 regionCode: "US",
                 maxResults: 12,
-                order: "date",
-                pageToken: null
+                order: "date"
             }
-            const params = new URLSearchParams({
-                ...defaults,
-                ...args
-            })
+            const params = new URLSearchParams({ ...defaults, ...args })
 
-            const url = `${SEARCH_URL}?${params}`
+            const url = `${SEARCH_URL}?${params.toString()}`
             const options = {
                 method: "GET",
                 headers: {
@@ -32,11 +26,10 @@ class YoutubeApiService {
             }
 
             const response = await fetch(url, options)
-            const data = await response.json()
 
-            return YoutubeApiSerializer.serializeSearchResult(data)
+            return response
         } catch (err) {
-            console.error("Search API error:", err)
+            console.error("Search API error:", err.message)
             return null
         }
     }
