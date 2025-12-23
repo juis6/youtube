@@ -1,4 +1,4 @@
-import { Response } from "express";
+import { Response, Request } from "express";
 import { ICookieOptions } from "../types/interfaces";
 
 export class CookieUtil {
@@ -8,7 +8,7 @@ export class CookieUtil {
   private static readonly baseOptions: ICookieOptions = {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
-    sameSite: "strict",
+    sameSite: process.env.NODE_ENV === "production" ? "strict" : "lax",
     path: "/",
     maxAge: 0,
   };
@@ -49,11 +49,11 @@ export class CookieUtil {
     res.clearCookie(this.REFRESH_TOKEN_COOKIE, this.baseOptions);
   }
 
-  public static getAccessToken(req: any): string | undefined {
+  public static getAccessToken(req: Request): string | undefined {
     return req.cookies?.[this.ACCESS_TOKEN_COOKIE];
   }
 
-  public static getRefreshToken(req: any): string | undefined {
+  public static getRefreshToken(req: Request): string | undefined {
     return req.cookies?.[this.REFRESH_TOKEN_COOKIE];
   }
 }

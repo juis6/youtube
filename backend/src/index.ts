@@ -13,15 +13,19 @@ const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:5173";
 
 const app = express();
 
-app.use(morgan("tiny"));
-app.use(express.json());
-app.use(cookieParser());
 app.use(
   cors({
     origin: FRONTEND_URL,
     credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
+
+app.use(morgan("tiny"));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 
 app.get("/", (_req, res) => {
   res.status(200).json({

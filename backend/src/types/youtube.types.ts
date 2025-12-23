@@ -1,15 +1,13 @@
-// YouTube API Response Types
-
 export interface YouTubeSearchResponse {
-  kind?: string;
-  etag?: string;
+  kind: string;
+  etag: string;
   nextPageToken?: string;
   prevPageToken?: string;
-  pageInfo?: {
+  pageInfo: {
     totalResults: number;
     resultsPerPage: number;
   };
-  items?: YouTubeSearchItem[];
+  items: YouTubeSearchItem[];
 }
 
 export interface YouTubeSearchItem {
@@ -19,24 +17,28 @@ export interface YouTubeSearchItem {
     kind: string;
     videoId: string;
   };
-  snippet?: {
+  snippet: {
     publishedAt: string;
     channelId: string;
     title: string;
     description: string;
-    thumbnails: YouTubeThumbnails;
+    thumbnails: {
+      default?: { url: string; width: number; height: number };
+      medium?: { url: string; width: number; height: number };
+      high?: { url: string; width: number; height: number };
+    };
     channelTitle: string;
   };
 }
 
 export interface YouTubeVideosResponse {
-  kind?: string;
-  etag?: string;
-  pageInfo?: {
+  kind: string;
+  etag: string;
+  items: YouTubeVideoItem[];
+  pageInfo: {
     totalResults: number;
     resultsPerPage: number;
   };
-  items?: YouTubeVideoItem[];
 }
 
 export interface YouTubeVideoItem {
@@ -48,42 +50,22 @@ export interface YouTubeVideoItem {
     channelId: string;
     title: string;
     description: string;
-    thumbnails: YouTubeThumbnails;
-    channelTitle: string;
-    tags?: string[];
-    categoryId?: string;
-    liveBroadcastContent?: string;
-    localized?: {
-      title: string;
-      description: string;
+    thumbnails: {
+      default?: { url: string; width: number; height: number };
+      medium?: { url: string; width: number; height: number };
+      high?: { url: string; width: number; height: number };
     };
+    channelTitle: string;
+    categoryId: string;
   };
   contentDetails?: {
     duration: string;
-    dimension?: string;
-    definition?: string;
-    caption?: string;
-    licensedContent?: boolean;
-    projection?: string;
+    dimension: string;
+    definition: string;
   };
   statistics?: {
     viewCount: string;
     likeCount: string;
-    favoriteCount?: string;
     commentCount: string;
   };
-}
-
-export interface YouTubeThumbnails {
-  default?: YouTubeThumbnail;
-  medium?: YouTubeThumbnail;
-  high?: YouTubeThumbnail;
-  standard?: YouTubeThumbnail;
-  maxres?: YouTubeThumbnail;
-}
-
-export interface YouTubeThumbnail {
-  url: string;
-  width?: number;
-  height?: number;
 }

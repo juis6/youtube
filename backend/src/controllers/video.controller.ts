@@ -21,9 +21,12 @@ export class VideoController {
         return;
       }
 
-      const { query, maxResults } = req.query;
+      const query = req.query.q as string;
+      const maxResults = req.query.maxResults
+        ? parseInt(req.query.maxResults as string)
+        : 10;
 
-      if (!query || typeof query !== "string") {
+      if (!query) {
         res.status(400).json({
           success: false,
           error: "Search query is required",
@@ -31,9 +34,11 @@ export class VideoController {
         return;
       }
 
-      const max = maxResults ? parseInt(maxResults as string, 10) : undefined;
-
-      const videos = await this.videoService.searchVideos(userId, query, max);
+      const videos = await this.videoService.searchVideos(
+        userId,
+        query,
+        maxResults
+      );
 
       res.status(200).json({
         success: true,
@@ -42,8 +47,7 @@ export class VideoController {
     } catch (error) {
       res.status(500).json({
         success: false,
-        error:
-          error instanceof Error ? error.message : "Failed to search videos",
+        error: error instanceof Error ? error.message : "Search failed",
       } as IApiResponse);
     }
   };
@@ -60,7 +64,7 @@ export class VideoController {
         return;
       }
 
-      const { videoId } = req.params;
+      const videoId = req.params.videoId;
 
       if (!videoId) {
         res.status(400).json({
