@@ -4,9 +4,9 @@ import { IApiError, IApiResponse } from "../types/interfaces";
 export class ErrorMiddleware {
   public static handle(
     err: IApiError,
-    req: Request,
+    _req: Request,
     res: Response,
-    next: NextFunction
+    _next: NextFunction
   ): void {
     const statusCode = err.statusCode || 500;
     const message = err.message || "Internal Server Error";
@@ -20,7 +20,7 @@ export class ErrorMiddleware {
     } as IApiResponse);
   }
 
-  public static notFound(req: Request, res: Response): void {
+  public static notFound(_req: Request, res: Response): void {
     res.status(404).json({
       success: false,
       error: "Endpoint not found",

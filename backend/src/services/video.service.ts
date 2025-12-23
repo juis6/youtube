@@ -12,7 +12,7 @@ export class VideoService {
   }
 
   public async searchVideos(
-    userId: string,
+    _userId: string,
     query: string,
     maxResults?: number
   ): Promise<IYouTubeVideo[]> {

@@ -1,4 +1,4 @@
-import { ITokenPayload } from "./interfaces";
+import { ITokenPayload } from "./types/interfaces";
 
 declare global {
   namespace Express {
