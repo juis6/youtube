@@ -1,5 +1,5 @@
 import "dotenv/config";
-import express, { Application } from "express";
+import express from "express";
 import morgan from "morgan";
 import cors from "cors";
 import cookieParser from "cookie-parser";
@@ -8,63 +8,40 @@ import authRoutes from "./routes/auth.routes";
 import apiRoutes from "./routes/api.routes";
 import { ErrorMiddleware } from "./middleware/error.middleware";
 
-class Server {
-  private app: Application;
-  private readonly port: number;
-  private readonly frontendUrl: string;
+const PORT = parseInt(process.env.PORT || "3000", 10);
+const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:5173";
 
-  constructor() {
-    this.app = express();
-    this.port = parseInt(process.env.PORT || "3000", 10);
-    this.frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
+const app = express();
 
-    this.initializeMiddlewares();
-    this.initializeRoutes();
-    this.initializeErrorHandling();
-  }
+app.use(morgan("tiny"));
+app.use(express.json());
+app.use(cookieParser());
+app.use(
+  cors({
+    origin: FRONTEND_URL,
+    credentials: true,
+  })
+);
 
-  private initializeMiddlewares(): void {
-    this.app.use(morgan("tiny"));
-    this.app.use(express.json());
-    this.app.use(cookieParser());
-    this.app.use(
-      cors({
-        origin: this.frontendUrl,
-        credentials: true,
-      })
-    );
-  }
+app.get("/", (req, res) => {
+  res.status(200).json({
+    success: true,
+    message: "YouTube Video Search API with Authentication",
+  });
+});
 
-  private initializeRoutes(): void {
-    this.app.get("/", (req, res) => {
-      res.status(200).json({
-        success: true,
-        message: "YouTube Video Search API with Authentication",
-      });
-    });
+app.use("/auth", authRoutes);
+app.use("/api", apiRoutes);
 
-    this.app.use("/auth", authRoutes);
-    this.app.use("/api", apiRoutes);
-  }
+app.use(ErrorMiddleware.notFound);
+app.use(ErrorMiddleware.handle);
 
-  private initializeErrorHandling(): void {
-    this.app.use(ErrorMiddleware.notFound);
-    this.app.use(ErrorMiddleware.handle);
-  }
+app.listen(PORT, () => {
+  console.log(`Server is running on http://localhost:${PORT}`);
+});
 
-  public start(): void {
-    this.app.listen(this.port, () => {
-      console.log(`🚀 Server is running on http://localhost:${this.port}`);
-      console.log(`📡 Frontend URL: ${this.frontendUrl}`);
-    });
-
-    process.on("SIGINT", async () => {
-      console.log("\n🛑 Shutting down gracefully...");
-      await prisma.$disconnect();
-      process.exit(0);
-    });
-  }
-}
-
-const server = new Server();
-server.start();
+process.on("SIGINT", async () => {
+  console.log("\nShutting down gracefully...");
+  await prisma.$disconnect();
+  process.exit(0);
+});
